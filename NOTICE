@@ -1,0 +1,80 @@
+Third-party components
+======================
+
+This project builds on code from several sources. This file records what
+came from where, under what terms, and what was changed.
+
+InfoNES
+-------
+
+  Core/InfoNES/
+
+NES emulator by TMK, originally released in 2000 as freeware. The copy
+here comes from the PSP port (https://github.com/PSP-Archive/InfoNES),
+which is the most widely circulated variant of the source.
+
+InfoNES has no formal open-source licence. It has been distributed
+publicly as freeware for over two decades and ported to many platforms
+(see the list in https://github.com/jay-kumogata/InfoNES). If you intend
+to use it commercially, establish the licensing position yourself.
+
+Changes made for this port:
+
+  - InfoNES.c
+      * InfoNES_DrawLine() skips scanlines past NES_DISP_HEIGHT, which
+        is smaller than a full frame (see the memory notes in the
+        README). Without this the PPU writes past the end of the frame
+        buffer.
+      * InfoNES_Main() restored to a plain loop. The PSP port had the
+        loop commented out and called InfoNES_Init() inside it, which
+        reset the CPU on every iteration.
+      * The FrameCnt == 0 guard on DrawLine() and LoadFrame() was
+        removed — it stopped rendering after the first frame.
+      * APU_Reg indices masked to 0x1f. The PSP port indexed APU_Reg
+        with full 16-bit addresses, overflowing a 24-byte array.
+      * RAM, SRAM, PPURAM and ChrBuf placed in CCM, to keep SRAM1 free
+        for the DMA-visible frame buffer.
+
+  - InfoNES_pAPU.h
+      * APU_EVENT_MAX reduced from 15000 to 32. The event queue was
+        120 KB — larger than the entire chip.
+
+  - K6502_rw.h
+      * OAM DMA now costs 514 cycles, matching hardware. Without it,
+        games that rely on sprite DMA timing misbehave.
+
+  - InfoNES_Mapper.c
+      * Only mapper 0 is compiled in; the rest are #if 0-ed out. Several
+        mappers declare large static buffers that overflow RAM here.
+        The mapper source files are all still present.
+
+  - InfoNES_pAPU.c
+      * Audio is stubbed out at the HAL layer (nes_port.c), so the APU
+        is never driven. The core is otherwise untouched.
+
+FatFs
+-----
+
+  Drivers/FatFs/
+
+Generic FAT filesystem module by ChaN (http://elm-chan.org/fsw/ff/),
+BSD-style licence. Used only by the (currently unused) SD card driver.
+
+Configuration changed in ffconf.h:
+
+  - FF_CODE_PAGE 437 (US OEM)
+  - FF_USE_LFN 0 and FF_USE_FIND 0, to avoid the Unicode conversion
+    tables
+
+STMicroelectronics HAL and CMSIS
+--------------------------------
+
+  Not vendored — the build pulls these from the STM32CubeF4 firmware
+  package (STM32Cube_FW_F4_V1.28.3 by default). BSD-3-Clause.
+
+  Core/system_stm32f4xx.c is copied from that package into this tree so
+  the include order works without CubeMX.
+
+  stm32f4xx_hal_conf.h and STM32F407VETX_FLASH.ld are new files written
+  for this project; the linker script defines the unusual SRAM1/CCM
+  split described in the README.

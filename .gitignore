@@ -1,0 +1,18 @@
+# Build output
+*.o
+*.elf
+*.bin
+*.hex
+*.map
+*.d
+
+# Generated from a ROM you supply — never commit this.
+# It contains copyrighted game data.
+Core/Src/rom_data.c
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*~
+.DS_Store
