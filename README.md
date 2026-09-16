@@ -60,12 +60,22 @@ to PC8–PC12 and PD2. The driver is present but not used by default — see
 
 ## Building
 
-The Makefile defaults to the toolchain and firmware package bundled with
-STM32CubeIDE. Point it elsewhere if yours live somewhere different:
+Two things are needed beyond this repository: an `arm-none-eabi`
+toolchain, and the STM32CubeF4 firmware package for its HAL and CMSIS
+sources. The Makefile assumes a system-wide toolchain
+(`apt install gcc-arm-none-eabi`) and the standard Cube package location.
+
+If you use STM32CubeIDE, point `TOOLCHAIN` at its bundled compiler —
+the directory that contains `bin/arm-none-eabi-gcc`:
 
 ```sh
-make TOOLCHAIN=/usr \
-     FW=$HOME/STM32Cube/Repository/STM32Cube_FW_F4_V1.28.3
+make TOOLCHAIN=/opt/st/<cubeide>/plugins/<gnu-tools-for-stm32>/tools
+```
+
+And if your firmware package lives elsewhere:
+
+```sh
+make FW=/path/to/STM32Cube_FW_F4_V1.28.3
 ```
 
 Then:

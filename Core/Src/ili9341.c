@@ -296,7 +296,7 @@ void ILI9341_SetRotation(uint8_t rotation)
             disp_height = 320;
             break;
         case LANDSCAPE:
-            SPI_WriteData8(0x28); /* MV=1, BGR=1 → 横屏 320×240 */
+            SPI_WriteData8(0x28); /* MV=1, BGR=1 — landscape 320x240 */
             disp_width = 320;
             disp_height = 240;
             break;

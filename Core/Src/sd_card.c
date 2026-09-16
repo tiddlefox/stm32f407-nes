@@ -1,7 +1,7 @@
 /**
  * sd_card.c - microSD card driver via SDIO 4-bit for STM32F407VET6
  *
- * Pin mapping (板载卡槽):
+ * Pin mapping (on-board slot):
  *   PC8  = SDIO_D0
  *   PC9  = SDIO_D1
  *   PC10 = SDIO_D2

@@ -6,11 +6,17 @@
 #   make TOOLCHAIN=/usr CC=arm-none-eabi-gcc FW=/opt/STM32Cube_FW_F4
 
 # --- Toolchain -----------------------------------------------------
-# Defaults to the toolchain bundled with STM32CubeIDE 2.1.1.
-# Override with:  make TOOLCHAIN=/usr    (for a system-wide arm-none-eabi-*)
+# TOOLCHAIN is the directory holding bin/arm-none-eabi-gcc.
+#
+# A system-wide install (Debian/Ubuntu: `apt install gcc-arm-none-eabi`)
+# works with the default. STM32CubeIDE ships its own copy under plugins/,
+# so point TOOLCHAIN at the directory that contains its bin/:
+#
+#   make TOOLCHAIN=/opt/st/<cubeide>/plugins/<gnu-tools-for-stm32>/tools
+#
 # Note: `:=` rather than `?=` — make predefines CC as "cc", so ?= would
 # silently keep the host compiler.
-TOOLCHAIN ?= /opt/st/stm32cubeide_2.1.1/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.14.3.rel1.linux64_1.0.100.202602081740/tools
+TOOLCHAIN ?= /usr
 CC      := $(TOOLCHAIN)/bin/arm-none-eabi-gcc
 OBJCOPY := $(TOOLCHAIN)/bin/arm-none-eabi-objcopy
 SIZE    := $(TOOLCHAIN)/bin/arm-none-eabi-size
