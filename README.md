@@ -7,7 +7,9 @@ embedded in flash.
 No RTOS, no external RAM, no FPGA — just the 192 KB of on-chip RAM and
 a display.
 
+<!-- Drop a photo at docs/hardware.jpg and uncomment:
 ![Hardware running a game](docs/hardware.jpg)
+-->
 
 ## What works
 
