@@ -30,14 +30,18 @@ CPU = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 CFLAGS  = $(CPU) -DSTM32F407xx -DUSE_HAL_DRIVER
 CFLAGS += -O3 -Wall
 CFLAGS += -Wno-implicit-function-declaration -Wno-sequence-point
-CFLAGS += -ffunction-sections -fdata-sections -flto
+# NOTE: keep -flto OFF. With LTO the CS/DC-to-SPI setup interval shrinks
+# enough that the ILI9341 mis-latches commands at high SPI clock: the colour
+# test still passes, the first game frame is drawn, then the panel locks up
+# white and ignores every command until a power cycle.
+CFLAGS += -ffunction-sections -fdata-sections
 CFLAGS += -I. -ICore/Inc -ICore/InfoNES -ICore/InfoNES/mapper -IDrivers/FatFs
 CFLAGS += -I$(FW)/Drivers/STM32F4xx_HAL_Driver/Inc
 CFLAGS += -I$(FW)/Drivers/STM32F4xx_HAL_Driver/Inc/Legacy
 CFLAGS += -I$(FW)/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 CFLAGS += -I$(FW)/Drivers/CMSIS/Include
 
-LDFLAGS  = $(CPU) -T STM32F407VETX_FLASH.ld -flto
+LDFLAGS  = $(CPU) -T STM32F407VETX_FLASH.ld
 LDFLAGS += -Wl,--gc-sections -Wl,-Map=nes-stm32.map
 LDFLAGS += --specs=nosys.specs -lm
 
