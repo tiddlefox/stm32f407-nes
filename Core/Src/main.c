@@ -33,7 +33,9 @@ SD_HandleTypeDef  hsd;    /* SDIO — on-board slot */
 UART_HandleTypeDef huart1;
 
 /*-------------------------------------------------------------------*/
-/*  System Clock Configuration (168MHz from 8MHz HSE)                */
+/*  System Clock Configuration (216MHz from 8MHz HSE, overclocked)   */
+/*  168MHz -> SPI1 42MHz -> 111KB frame takes 21.3ms (~47fps)        */
+/*  216MHz -> PCLK2 108MHz -> SPI1 54MHz -> 16.5ms (~60fps)          */
 /*-------------------------------------------------------------------*/
 
 void SystemClock_Config(void)
@@ -50,19 +52,19 @@ void SystemClock_Config(void)
     RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
     RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
     RCC_OscInitStruct.PLL.PLLM = 8;
-    RCC_OscInitStruct.PLL.PLLN = 336;
-    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;   /* PLLP = 84MHz */
-    RCC_OscInitStruct.PLL.PLLQ = 7;                /* PLLQ = 48MHz (for USB/SDIO) */
+    RCC_OscInitStruct.PLL.PLLN = 432;              /* VCO = 8/8*432 = 432MHz (max) */
+    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;   /* SYSCLK = 432/2 = 216MHz */
+    RCC_OscInitStruct.PLL.PLLQ = 9;                /* PLLQ = 48MHz (for USB/SDIO) */
     HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
-    /* Configure system clocks: HCLK=168MHz, PCLK1=42MHz, PCLK2=84MHz */
+    /* Configure system clocks: HCLK=216MHz, PCLK1=54MHz, PCLK2=108MHz */
     RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
                                 | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
     RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
     RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
     RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
-    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
+    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_7);
 
     /* Enable ART Accelerator: prefetch buffer + instruction cache.
      * Without this, every Flash fetch costs 5 wait-states uncached.
